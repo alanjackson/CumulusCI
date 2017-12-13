@@ -134,10 +134,23 @@
           -->
     </target>
 
+    <!-- rebuild package.xml -->
+    <target name="rebuildPackageXml" >
+	<exec executable="cumulusci">
+		<arg value="dev" />
+		<arg value="update_package_xml" />
+	</exec>
+    </target>
+
     <!-- deployWithoutTest: Run a full deployment but don't run all tests.  This is useful if you already know tests will pass from previous runs and just want to deploy faster -->
     <target name="deployWithoutTest">
         <echo>----------------------------------------------------------------------------</echo>
-        <antcall target="preDeploy" />
+	<tstamp>
+	  <format property="TODAY_UK" pattern="HH:mm:ss:sss zzz" locale="en,UK"/>
+	</tstamp>
+	<echo>the current time is ${TODAY_UK}</echo>
+	<antcall target="rebuildPackageXml" />
+	<antcall target="preDeploy" />
         <sf:deploy username="${sf.username}" password="${sf.password}" serverurl="${sf.serverurl}" deployRoot="src" maxPoll="${cumulusci.maxPoll.notest}" />
         <antcall target="postDeploy" />
     </target>
